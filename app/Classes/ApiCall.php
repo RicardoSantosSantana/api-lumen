@@ -17,7 +17,6 @@ class  ApiCall
     private function Post($item, EndPointReturn $options)
     {
 
-
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $options->url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -25,9 +24,12 @@ class  ApiCall
 
         if ($options->with_authorization_token) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $this->token->access_token]);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($item));
+        }
+        else{
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($item));
         }
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($item));
 
         $output = curl_exec($ch);
 

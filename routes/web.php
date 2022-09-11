@@ -18,7 +18,7 @@ Route::group(['prefix' => 'api', 'middleware' => 'cors'], function () {
         Route::group(['prefix' => 'product'], function () {
             Route::get('/', 'ProductController@index');
             Route::get('/{id}', 'ProductController@getProductId');
-            Route::post('/download', 'ProductController@download_save_products');
+            Route::get('/download', 'ProductController@download_save_products');
         });
 
         Route::group(['prefix' => 'meli'], function () {
