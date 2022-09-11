@@ -1,0 +1,705 @@
+openapi: 3.0.3
+info:
+  title: Api Meli - OpenAPI 3.0
+  description: |-
+    Ricardo This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
+
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: rssantan@gmail.coim
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:8000/api
+tags:
+  - name: token
+    description: refresh token e new token
+  - name: user
+    description: register, login e list
+  - name: products
+    description: list, store, create on meli
+
+paths:
+  /token/refresh:
+    get:
+      tags:
+        - token
+      summary: Get new refresh token on mercado livre api
+      description: O Token de acesso inspira a cada 6 horas, por isso é necessario ser refeito o token de acesso
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshToken'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Token'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Token'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Token'
+        '401':
+          description: 'not authorized - please provide valid token'
+        '404':
+          description: 'Error validating grant. Your authorization code or refresh token may be expired or it was already used'
+      security:
+        - bearerAuth: []
+  /token/new:
+    get:
+      tags:
+        - token
+      summary: Get new token token on mercado livre api
+      description: Para acessar a rota de produtos é necessário ter o token de acesso.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewToken'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Token'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Token'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Token'
+        '401':
+          description: Method Not Allowed
+        '404':
+          description: 'Error validating grant. Your authorization code or refresh token may be expired or it was already used'
+      security:
+        - bearerAuth: []
+
+  /register:
+    post:
+      tags:
+        - user
+      summary: Register a new user
+      description: Registrar novo usuário
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '422':
+          description: 'unprocessable content - name, email, password - The fields is required.'
+  /login:
+    post:
+      tags:
+        - user
+      summary: Login in app.
+      description: Login in app.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserLogin'
+        '404':
+          description: User not found
+        '422':
+          description: 'unprocessable content - email, password - The fields is required.'
+  /me:
+    get:
+      tags:
+        - user
+      summary: Get all user data.
+      description: Get all user data.
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserList'
+        '401':
+          description: 'not authorized - please provide valid token'
+      security:
+        - bearerAuth: []
+
+  /product:
+    get:
+      tags:
+        - product
+      summary: Get all products of the Meli
+      description: Para acessar a rota de produtos é necessário ter o token de acesso.
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductAll'
+        '401':
+          description: "not authorized - please provide valid token"
+        '404':
+          description: 'Error validating grant. Your authorization code or refresh token may be expired or it was already used'
+      security:
+        - bearerAuth: []
+
+  /product/items:
+    get:
+      tags:
+        - product
+      summary: Get all IDs the products created of the Meli
+      description: Para acessar a rota de produtos é necessário ter o token de acesso.
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example:
+                      "MLB2779572823"
+
+        '401':
+          description: Method Not Allowed
+        '404':
+          description: 'Error validating grant. Your authorization code or refresh token may be expired or it was already used'
+      security:
+        - bearerAuth: []
+
+  /product/items/{item_id}:
+    get:
+      summary: Get a product by ID
+      parameters:
+        - in: path
+          name: item_id
+          schema:
+            type: string
+          required: true
+          description: ID of the product to get
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductAll'
+        '401':
+          description: Method Not Allowed
+        '404':
+          description: 'Error validating grant. Your authorization code or refresh token may be expired or it was already used'
+      security:
+        - bearerAuth: []
+
+  /product/items/{item_id}/description:
+    get:
+      summary: Get a description of the product by ID
+      parameters:
+        - in: path
+          name: item_id
+          schema:
+            type: string
+          required: true
+          description: ID of the product to get description
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Description'
+        '401':
+          description: Method Not Allowed
+        '404':
+          description: 'Error validating grant. Your authorization code or refresh token may be expired or it was already used'
+      security:
+        - bearerAuth: []
+
+  /product/save:
+    post:
+      tags:
+        - product
+      summary: Login in app.
+      description: Login in app.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserLogin'
+        '404':
+          description: User not found
+        '422':
+          description: 'unprocessable content - email, password - The fields is required.'
+      security:
+        - bearerAuth: []
+
+  /product/create:
+    post:
+      tags:
+        - product
+      summary: Login in app.
+      description: Login in app.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserLogin'
+        '404':
+          description: User not found
+        '422':
+          description: 'unprocessable content - email, password - The fields is required.'
+      security:
+        - bearerAuth: []
+
+components:
+  schemas:
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+          format: string
+          example: APP_USR-220010-082914-f7a656d5cd5e9feee-01232
+        token_type:
+          type: string
+          example: bearer
+        expires_in:
+          type: integer
+          example: 21600
+        scope:
+          type: string
+          example: offline_access
+          enum:
+           - offline_access
+           - read
+           - write
+        user_id:
+          type: integer
+          example: 0123456789
+        refresh_token:
+          type: string
+          format: string
+          example: TG-630baa542029cc000119c7f2-1176272578
+    NewToken:
+      type: object
+      properties:
+        code:
+          type: string
+          format: string
+          example: TG-630da88865c5be000104304e-1176272578
+        client_id:
+          type: string
+          example: "2200107891711741"
+        client_secret:
+          type: string
+          example: "FJATnQFyHWIjcwaJg0e2eM9Y9z9ByXEH"
+        redirect_uri:
+          type: string
+          example: "https://reciboonline.com"
+    RefreshToken:
+      type: object
+      properties:
+        client_id:
+          type: string
+          example: "2200107891711741"
+        client_secret:
+          type: string
+          example: "FJATnQFyHWIjcwaJg0e2eM9Y9z9ByXEH"
+        refresh_token:
+          type: string
+          example: "TG-630baa542029cc000119c7f2-1176272578"
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          exemplo: 1
+        name:
+          type: string
+          example: "User Test"
+        email:
+          type: string
+          format: email
+          example: "email@email.com"
+        client_id:
+          type: string
+          example: "client_id_c9ddd525-7ac0-451a-bc67-80b39966b296"
+        client_secret:
+          type: string
+          example: "client_secret_9e26257c-0c05-4f29-89df-1d58a9234efa"
+        updated_at:
+          type: datetime
+          example: "2022-08-31T03:17:27.000000Z"
+        created_at":
+          type: datetime
+          example: "2022-08-31T03:17:27.000000Z"
+    Register:
+      type: object
+      properties:
+        name:
+          type: string
+          format: string
+          example: 'Test User'
+        email:
+          type: string
+          format: email
+          example: 'email@email.com'
+        password:
+          type: string
+          format: password
+          example: '12345678'
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: 'email@email.com'
+        password:
+          type: string
+          format: password
+          example: '12345678'
+
+    UserLogin:
+      type: object
+      properties:
+        token:
+          type: string
+          format: JWT
+          example: '"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNjYxOTE3MTUwLCJleHAiOjE2NjE5MjA3NTAsIm5iZiI6MTY2MTkxNzE1MCwianRpIjoiSDhFcjZLS1F2RGUwbzMydCIsInN1YiI6IjIiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.zbXcaJjAIY-6l7D0EGmweQOi4PpV6didhAsktZbWdPk"'
+        token_type:
+          type: string
+          example: 'bearer'
+        expires_in:
+          type: integer
+          example: '60'
+    UserList:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 0
+        id_social:
+          type: string
+          example: google
+        provider:
+          type: string
+          example: google.com
+        nickname:
+          type: string
+          example: userTest
+        name:
+          type: string
+          example: "User Test"
+        email:
+          type: string
+          example: "email@email.com"
+        avatar_url:
+          type: string
+          example: https://burst.shopifycdn.com/photos/pink-spring-tree-blossoms.jpg
+        client_id:
+          type: string
+          example: "client_id_dcddd4eab-37a4-4089-807d-3ab31fda4e4a"
+        client_secret:
+          type: string
+          example: "client_secret_6d430822-7636-410a-bbef-105b268bawwe"
+        created_at:
+          type: string
+          example: "2022-08-31T00:26:43.000000Z"
+        updated_at:
+          type: string
+          example: "2022-08-31T00:26:43.000000Z"
+
+    ProductAll:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "MLB2779572823"
+        title:
+          type: string
+          example: "Não Ofertar - Produto De Teste"
+        site_id:
+          type: string
+          example: "MLB"
+        subtitle:
+          type: string
+          example: ""
+        seller_id:
+          type: integer
+          example: 1176272578
+        category_id:
+          type: string
+          example: "MLB3530"
+        official_store_id:
+          type: string
+          example: ""
+        price:
+          type: float32
+          example: "100.99"
+        base_price:
+          type: float32
+          example: "100.99"
+        original_price:
+          type: float32
+          example: "0.00"
+        currency_id:
+          type: string
+          example: "BRL"
+        initial_quantity:
+          type: integer
+          example: 1
+        available_quantity:
+          type: integer
+          example: 1
+        sold_quantity:
+          type: integer
+          example: 0
+        sale_terms:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "WARRANTY_TYPE"
+            name:
+              type: string
+              example: "Tipo de garantia"
+            values:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 2230280
+                name:
+                  type: string
+                  example: "Garantia do vendedor"
+                value_struct:
+                  type: object
+                  properties:
+                    unit:
+                      type: string
+                      example: ""
+                    number:
+                      type: integer
+                      example: 0
+            value_id:
+              type: integer
+              example: 2230280
+            value_name:
+              type: string
+              example: "Garantia do vendedor"
+            value_struct:
+              type: object
+              properties:
+                unit:
+                  type: string
+                  example: ""
+                number:
+                  type: integer
+                  example: 0
+            value_type:
+              type: string
+              example: "string"
+        pictures:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "938331-MLA45268824993_032021"
+            url:
+              type: string
+              example: "http://http2.mlstatic.com/D_938331-MLA45268824993_032021-O.jpg"
+            secure_url:
+              type: string
+              example: "https://http2.mlstatic.com/D_938331-MLA45268824993_032021-O.jpg"
+            size:
+              type: string
+              example: "500x341"
+            max_size:
+              type: string
+              example: "1200x820"
+            quality:
+              type: string
+              example: ""
+        description:
+          type: object
+          properties:
+            text:
+              type: string
+              example: ""
+            plain_text:
+              type: string
+              example: "Essa é a descrição do seu anúncio"
+            date_created:
+              type: string
+              example: "2022-08-30T23:07:35.299Z"
+            last_updated:
+              type: string
+              example: "2022-08-30T23:07:35.299Z"
+        buying_mode:
+          type: string
+          example: "buy_it_now"
+        listing_type_id:
+          type: string
+          example: "free"
+        start_time:
+          type: string
+          example: "2022-08-30T23:07:34.000Z"
+        stop_time:
+          type: string
+          example: "2022-10-29T04:00:00.000Z"
+        condition:
+          type: string
+          example: "new"
+        permalink:
+          type: string
+          example: "https://produto.mercadolivre.com.br/MLB-2779572823-no-ofertar-produto-de-teste-_JM"
+        thumbnail_id:
+          type: string
+          example: "692434-MLB51347372211_082022"
+        thumbnail:
+          type: string
+          example: "http://http2.mlstatic.com/D_692434-MLB51347372211_082022-I.jpg"
+        secure_thumbnail:
+          type: string
+          example: "https://http2.mlstatic.com/D_692434-MLB51347372211_082022-I.jpg"
+        status:
+          type: string
+          example: "active"
+        warranty:
+          type: string
+          example: "Garantia do vendedor: 6 meses"
+        catalog_product_id:
+          type: string
+          example: ""
+        domain_id:
+          type: string
+          example: "MLB-UNCLASSIFIED_PRODUCTS"
+        health:
+          type: float32
+          example: "0.57"
+        created_at:
+          type: string
+          example: "2022-08-31T21:00:01.000000Z"
+        updated_at:
+          type: string
+          example: "2022-08-31T18:00:01.000000Z"
+
+    Description:
+      type: object
+      properties:
+        text:
+          type: string
+          example: ""
+        plain_text:
+          type: string
+          example: "Essa é a descrição do aplicativo que vendo"
+        last_updated:
+          type: string
+          example: "2022-08-30T03:05:56.386Z"
+        date_created:
+          type: string
+          example: "2022-08-30T03:05:56.386Z"
+        snapshot:
+          url:
+            type: string
+            example: "http://descriptions.mlstatic.com/D-MLB2778272531.jpg?hash=8520c3b8559cb08aa7e782b8f5334ffe_0x0"
+          width:
+            type: string
+            example: 0
+          height:
+            type: string
+            example: 0
+          status:
+            type: string
+            example: ""
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
