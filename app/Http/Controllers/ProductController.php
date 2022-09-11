@@ -21,7 +21,6 @@ class ProductController extends BaseController
     public function getProductId($id)
     {
 
-
         if ($product = Product::where('id', $id)->first()) {
             return response()->json($product, 200);
         }
@@ -32,25 +31,29 @@ class ProductController extends BaseController
     public function download_save_products()
     {
 
-        $transaction =   DB::transaction(function () {
+        $transaction =  DB::transaction(function () {
 
             $items = new Items;
 
-            $id_items = (object)$items->get_items_id();
+            $id_items =  $items->get_items_id();
+
+            if (isset($id_items->error)) {
+                return response()->json($id_items, $id_items->status);
+            }
 
             $data = [];
 
-            foreach ($id_items->items as $i => $item) {
+            foreach ($id_items["items"] as $i => $item) {
                 $detail = $items->get_items_details($item);
                 $detail->description  = $items->get_items_description($item);
                 $product = $items->formatItem($detail);
-                $data [$i] = (array)$product;
+                $data[$i] = (array)$product;
             }
 
             DB::table('products')->delete();
             DB::table('products')->insert($data);
 
-            return response()->json(["message" => "products save on database","data"=>$data], 200);
+            return response()->json(["message" => "products save on database", "data" => $data], 200);
         });
 
         return $transaction;

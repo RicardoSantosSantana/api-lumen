@@ -128,6 +128,11 @@ class Items
     public function get_items_id()
     {
         $token = Token_Meli::GetActiveToken();
+
+        if(isset($token->error)){
+            return $token;
+        }
+
         $endpoint = EndPoint::get_items_list_ids($token->user_id, $token->access_token);
 
         $httpCall = new ApiCall;
