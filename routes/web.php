@@ -24,10 +24,9 @@ Route::group(['prefix' => 'api', 'middleware' => 'cors'], function () {
         Route::group(['prefix' => 'meli'], function () {
             Route::post('/product/create',  '\App\Classes\Meli\Items@create');
 
-            Route::post('/product/desc',  '\App\Classes\Meli\Items@add_description');
+            Route::post('/product/add_description',  '\App\Classes\Meli\Items@add_description');
             Route::post('/token/new',  '\App\Classes\Meli\Token_Meli@GenerateToken');
             Route::post('/token/refresh',  '\App\Classes\Meli\Token_Meli@GenerateRefreshToken');
         });
-
     });
 });
