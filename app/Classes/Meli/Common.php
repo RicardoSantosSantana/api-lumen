@@ -3,6 +3,7 @@
 namespace App\Classes\Meli;
 
 use stdClass;
+
 trait Common
 {
     private $rulesCreateToken = [
@@ -13,7 +14,7 @@ trait Common
     ];
 
     private $messagesCreateToken = [
-        "code.required" => "To acquire new CODE, Open in Web Browser: https://auth.mercadolivre.com.br/authorization?response_type=code&client_id=YOUR_CLIENT_ID_HERE&redirect_uri=YOUR_URL_REDIRECT_HERE&state=RANDOM_STRING_HERE",
+        "code.required" => "To acquire new CODE, Open in Web Browser: https://code.ricardo.dev.br and inform your Client_ID",
         "client_id.required" => "The CLIENT_ID is provided when create a new app on Mercado Livre.",
         "client_secret.required" => "The CLIENT_SECRET is provided when create a new app on Mercado Livre.",
         "redirect_uri.required" => "The REDIRECT_URI must be the same configured in your application on Mercado Livre."
@@ -92,6 +93,4 @@ trait Common
             "client_secret" => env("CLIENT_SECRET")
         ];
     }
-
-
 }
