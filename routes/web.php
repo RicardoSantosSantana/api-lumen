@@ -6,19 +6,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api', 'middleware' => 'cors'], function () {
 
-    Route::group(['prefix' => 'user'], function () {
-        Route::get('/profile/{id}', 'AuthController@profile');
-        Route::post('/login', 'AuthController@login');
-        Route::post('/register', 'AuthController@register');
-    });
+
 
     Route::group(['middleware' => 'auth'], function () {
 
-
         Route::group(['prefix' => 'product'], function () {
+            Route::get('/download', 'ProductController@download_save_products');
             Route::get('/', 'ProductController@index');
             Route::get('/{id}', 'ProductController@getProductId');
-            Route::get('/download', 'ProductController@download_save_products');
         });
 
         Route::group(['prefix' => 'meli'], function () {
@@ -28,5 +23,11 @@ Route::group(['prefix' => 'api', 'middleware' => 'cors'], function () {
             Route::post('/token/new',  '\App\Classes\Meli\Token_Meli@GenerateToken');
             Route::post('/token/refresh',  '\App\Classes\Meli\Token_Meli@GenerateRefreshToken');
         });
+    });
+
+    Route::group(['prefix' => 'user'], function () {
+        Route::get('/profile/{id}', 'AuthController@profile');
+        Route::post('/login', 'AuthController@login');
+        Route::post('/register', 'AuthController@register');
     });
 });

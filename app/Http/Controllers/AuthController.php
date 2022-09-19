@@ -88,7 +88,6 @@ class AuthController extends Controller
         } else {
             return null;
         }
-
     }
 
     private function returnUserWithToken($token)
@@ -186,6 +185,7 @@ class AuthController extends Controller
 
     public function profile($id)
     {
+
 
         $user = User::where('id', $id)->first();
 
